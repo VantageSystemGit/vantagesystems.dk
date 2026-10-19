@@ -32,7 +32,7 @@
 }
 html.lenis,html.lenis body{height:auto}
 .lenis.lenis-smooth{scroll-behavior:auto!important}
-body{background:var(--night);color:var(--snow);font-family:var(--f-body);font-weight:300;font-size:17px;line-height:1.6;overflow-x:clip}
+body{margin:0;background:var(--night);color:var(--snow);font-family:var(--f-body);font-weight:300;font-size:17px;line-height:1.6;overflow-x:clip}
 a{color:inherit}
 :focus-visible{outline:2px solid var(--glow);outline-offset:3px;border-radius:4px}
 .wrap{padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
@@ -201,13 +201,14 @@ em{font-style:italic;color:var(--glow)}
 .summit{position:relative;height:100vh;min-height:620px;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center}
 #mtn2{position:absolute;inset:0;width:100%;height:100%;display:block}
 .summit-veil{position:absolute;inset:0;background:radial-gradient(60% 50% at 50% 50%, rgba(11,21,32,.72), rgba(11,21,32,.2) 70%, rgba(11,21,32,.85) 100%);pointer-events:none}
-.summit .coords2{position:absolute;left:0;right:0;bottom:28px;z-index:2;color:rgba(244,246,248,.55)}
+.summit .coords2{position:absolute;left:0;right:0;bottom:calc(56px + env(safe-area-inset-bottom,0px));z-index:2;color:rgba(244,246,248,.55)}
 .summit-c{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:28px}
 .summit h2{font-size:clamp(44px,7vw,112px);line-height:1}
 .mail{font-family:var(--f-mono);font-size:13px;letter-spacing:.06em;color:var(--mist);user-select:all}
 
-footer{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center;padding-block:32px;border-top:1px solid var(--line);color:#8597AB;font-size:11px}
-footer img{width:118px;height:auto;display:block}
+.summit .legal{position:absolute;left:16px;right:16px;bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:2;font-size:10px;letter-spacing:.16em;color:rgba(244,246,248,.38)}
+.summit .legal a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+.summit .legal a:hover{color:var(--glow)}
 .foot-links{display:flex;gap:24px;flex-wrap:wrap}.foot-links a{text-decoration:none;transition:color .3s}.foot-links a:hover{color:var(--glow)}
 
 @media (max-width:760px){
@@ -239,6 +240,7 @@ footer img{width:118px;height:auto;display:block}
   .statement{padding-block:96px}
   .tl-cap h2{font-size:34px}
   .summit{height:100svh}
+  .summit .coords2{bottom:calc(66px + env(safe-area-inset-bottom,0px));font-size:10px}
   .refs-grid{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion: reduce){
@@ -426,6 +428,7 @@ footer img{width:118px;height:auto;display:block}
     <span class="mail">cw@vantagesystems.dk</span>
   </div>
   <div class="coords2 mono" aria-hidden="true">Mount Ruapehu · seen from above · contour interval ≈ 60 m</div>
+  <div class="legal mono">Vantage Systems I/S · Denmark · CVR 46453344 · <a href="privacy.html">Privacy</a></div>
 </section>
 </main>
 
@@ -488,7 +491,7 @@ footer img{width:118px;height:auto;display:block}
   });
 })();
 </script>
-<footer class="wrap mono"><img src="logo.png" alt="Vantage"><span>Vantage Systems I/S · Denmark · CVR 46453344</span><span class="foot-links"><a href="mailto:cw@vantagesystems.dk">cw@vantagesystems.dk</a><a href="privacy.html">Privacy</a></span></footer>
+
 
 <script src="three.min.js"></script>
 <script src="gsap.min.js"></script>
