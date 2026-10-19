@@ -211,12 +211,35 @@ footer img{width:118px;height:auto;display:block}
 .foot-links{display:flex;gap:24px;flex-wrap:wrap}.foot-links a{text-decoration:none;transition:color .3s}.foot-links a:hover{color:var(--glow)}
 
 @media (max-width:760px){
-  .nav ul li:not(:last-child){display:none}
-  .dk{height:auto;min-height:100vh;padding-block:96px}
-  .dk-stack{height:340px}
-  .step-stack{height:360px}
-  .window{height:52vh}
-  .walk{height:auto;min-height:100vh;padding-block:96px}
+  .nav ul{gap:18px}
+  .nav ul a{font-size:10px;letter-spacing:.16em}
+  .nav img{width:84px}
+  .hero{height:100svh;min-height:560px}
+  .hero-copy{bottom:clamp(40px,8svh,80px)}
+  .hero h1{font-size:clamp(56px,17vw,96px)}
+  .hero-side p{font-size:16px}
+  .hero-meta .coords{display:none}
+  /* pinned chapters: copy on top, visual below, all inside one phone screen */
+  .dk,.walk{height:100svh;min-height:0;padding-block:calc(84px + env(safe-area-inset-top,0px)) 16px;box-sizing:border-box;align-items:stretch}
+  .dk-in,.walk .inner{flex-direction:column;flex-wrap:nowrap;justify-content:flex-start;align-items:stretch;gap:14px;height:100%}
+  .dk-copy,.steps{flex:0 0 auto;max-width:none;gap:12px}
+  .dk-stack{height:168px}
+  .dk-step{gap:8px}
+  .dk-step h2{font-size:clamp(28px,8.2vw,38px)}
+  .dk-step p{font-size:14px;line-height:1.5}
+  .dk-note{font-size:9px}
+  .dk-map{flex:1 1 auto;height:auto;min-height:0;width:100%;aspect-ratio:auto}
+  .step-stack{height:176px}
+  .step{gap:6px}
+  .step .n{font-size:40px}
+  .step h3{font-size:clamp(26px,7.4vw,34px)}
+  .step p{font-size:14px;line-height:1.5}
+  .prog-l{font-size:9px}
+  .window{flex:1 1 auto;height:auto;min-height:0;width:100%;aspect-ratio:auto;align-self:center;max-width:460px}
+  .statement{padding-block:96px}
+  .tl-cap h2{font-size:34px}
+  .summit{height:100svh}
+  .refs-grid{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion: reduce){
   .marq-t{animation:none}
@@ -387,7 +410,7 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 function buildMountain(canvas, top){
   if(!window.THREE||!canvas) return null;
   const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:false});
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, innerWidth<760?1.5:2));
   const scene = new THREE.Scene();
   const BG = new THREE.Color('#0B1520');
   scene.background = BG;
@@ -401,7 +424,7 @@ function buildMountain(canvas, top){
     const x0=Math.floor(x),y0=Math.floor(y),x1=Math.min(x0+1,DEM_N-1),y1=Math.min(y0+1,DEM_N-1),fx=x-x0,fy=y-y0;
     const g=(i,j)=>dem[j*DEM_N+i]/65535;
     return (g(x0,y0)*(1-fx)+g(x1,y0)*fx)*(1-fy)+(g(x0,y1)*(1-fx)+g(x1,y1)*fx)*fy;}
-  const SEG = innerWidth < 760 ? 220 : 319;
+  const SEG = innerWidth < 760 ? 200 : 319;
   const SIZE=9, EXAG=1.7;
   const geo = new THREE.PlaneGeometry(SIZE,SIZE,SEG,SEG);
   geo.rotateX(-Math.PI/2);
@@ -474,7 +497,8 @@ function buildMountain(canvas, top){
         camera.lookAt(0,.6,0);
       } else {
         const ang = (reduce?0:t*.045) + .6 + state.mx*.35;
-        const dist = 5.8 - state.lift*1.4;
+        const fit = camera.aspect<1 ? 1+(1-camera.aspect)*1.1 : 1;
+        const dist = (5.8 - state.lift*1.4)*fit;
         const y = 1.9 + state.lift*2.2 - state.my*.4;
         camera.position.set(Math.cos(ang)*dist, y, Math.sin(ang)*dist);
         camera.lookAt(0,.8+state.lift*.1,0);
@@ -489,7 +513,8 @@ function buildMountain(canvas, top){
 }
 const canvas = document.getElementById('mtn');
 const glOK = (()=>{try{const c=document.createElement('canvas');return !!(window.WebGLRenderingContext&&(c.getContext('webgl')||c.getContext('experimental-webgl')));}catch(e){return false;}})();
-const lowEnd = !glOK || !window.THREE || (navigator.connection&&navigator.connection.saveData) || ((navigator.hardwareConcurrency||8)<=4 && innerWidth<760);
+const lowEnd = !glOK || !window.THREE || (navigator.connection&&navigator.connection.saveData);
+const isPhone = innerWidth < 760;
 if(lowEnd){document.querySelector('.hero').classList.add('static');document.querySelector('.summit').classList.add('static');}
 const mtn = lowEnd?null:buildMountain(canvas,false);
 const mtn2 = lowEnd?null:buildMountain(document.getElementById('mtn2'),true);
@@ -547,7 +572,7 @@ let dk=null;
 let proc=null;
 (function(){
   const cv=document.getElementById('proc'); if(!window.THREE||!cv) return;
-  const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true}); R.setPixelRatio(Math.min(devicePixelRatio,2));
+  const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true}); R.setPixelRatio(Math.min(devicePixelRatio,innerWidth<760?1.5:2));
   const S=new THREE.Scene(); const C=new THREE.PerspectiveCamera(36,3/4,.1,50); C.position.set(0,.6,7.2);
   const N=innerWidth<760?900:1800, TOP=25; let seed=11; const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
   const gauss=()=>{let u=0,v=0;while(!u)u=rnd();while(!v)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);};
@@ -629,9 +654,10 @@ const nav=document.getElementById('nav');
 addEventListener('scroll',()=>nav.classList.toggle('solid',scrollY>innerHeight*.6),{passive:true});
 if(!window.gsap) return;
 gsap.registerPlugin(ScrollTrigger, window.SplitText||{});
+ScrollTrigger.config({ignoreMobileResize:true});
 
 if(window.Lenis && !reduce){
-  const lenis=new Lenis({lerp:.085,smoothWheel:true});
+  const lenis=new Lenis({lerp:.085,smoothWheel:true,syncTouch:false});
   lenis.on('scroll',ScrollTrigger.update);
   gsap.ticker.add(t=>lenis.raf(t*1000)); gsap.ticker.lagSmoothing(0);
   document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const el=document.querySelector(a.getAttribute('href'));if(el){e.preventDefault();lenis.scrollTo(el,{offset:0,duration:1.6});}}));
@@ -721,5 +747,6 @@ if(!reduce){
 }
 })();
 </script>
+
 </body>
 </html>
