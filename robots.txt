@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://vantagesystems.dk/sitemap.xml
+Sitemap: https://www.vantagesystems.dk/sitemap.xml
