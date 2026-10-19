@@ -343,6 +343,20 @@ em{font-style:italic;color:var(--glow)}
   .f-grid{grid-template-columns:1fr}.f-hero p{max-width:100%}.f-hero canvas{width:100%;opacity:.45}.f-body{min-height:0}
   .product-notes{grid-template-columns:1fr;gap:18px}.f-url{display:none}
 }
+
+/* topographic map behind the whole page */
+.topo-bg{position:fixed;left:0;top:-60px;z-index:-1;pointer-events:none;display:block}
+
+/* scroll cue */
+.scroll-cue{position:absolute;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:3;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;color:rgba(244,246,248,.6);text-decoration:none;font-family:var(--f-mono);font-size:10px;letter-spacing:.32em;text-transform:uppercase;transition:opacity .5s,transform .5s;opacity:0;animation:cueIn 1s 1.6s ease forwards}
+.scroll-cue:hover{color:var(--glow)}
+.scroll-cue .rail{position:relative;width:1px;height:46px;background:linear-gradient(180deg,rgba(244,246,248,.05),rgba(244,246,248,.28),rgba(244,246,248,.05));overflow:hidden}
+.scroll-cue .rail::after{content:"";position:absolute;left:-1.5px;top:-10px;width:4px;height:10px;border-radius:4px;background:var(--glow);box-shadow:0 0 10px rgba(243,217,198,.8);animation:cueDrop 2.2s cubic-bezier(.6,0,.3,1) infinite}
+.scroll-cue.gone{opacity:0!important;transform:translate(-50%,10px);pointer-events:none}
+@keyframes cueDrop{0%{transform:translateY(0);opacity:0}15%{opacity:1}75%{opacity:1}100%{transform:translateY(58px);opacity:0}}
+@keyframes cueIn{to{opacity:1}}
+@media (max-width:760px){.scroll-cue{bottom:calc(10px + env(safe-area-inset-bottom,0px));gap:6px}.scroll-cue span{font-size:9px}.scroll-cue .rail{height:30px}}
+@media (prefers-reduced-motion:reduce){.scroll-cue{animation:none;opacity:1}.scroll-cue .rail::after{animation:none;top:18px}}
 </style>
 </head>
 <body>
@@ -366,9 +380,10 @@ em{font-style:italic;color:var(--glow)}
       <a class="btn js-demo" href="#contact">Book a demo <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
     </div>
   </div></div>
+  <a class="scroll-cue" id="scrollCue" href="#thesisSec" aria-label="Scroll down"><span>Scroll</span><i class="rail" aria-hidden="true"></i></a>
 </section>
 
-<section class="statement wrap" aria-label="Thesis">
+<section class="statement wrap" id="thesisSec" aria-label="Thesis">
   <p id="thesis">Most deals are found when they are already on the market. The best ones are seen from higher ground.</p>
 </section>
 
@@ -563,6 +578,107 @@ em{font-style:italic;color:var(--glow)}
 </main>
 
 
+<script>
+/* scroll cue: fades once the visitor starts scrolling */
+(()=>{const c=document.getElementById('scrollCue'); if(!c) return;
+  const f=()=>c.classList.toggle('gone',scrollY>40); addEventListener('scroll',f,{passive:true}); f();
+  c.addEventListener('click',e=>{const t=document.getElementById('thesisSec'); if(!t) return; e.preventDefault(); if(window.__lenis) window.__lenis.scrollTo(t,{duration:1.4}); else t.scrollIntoView({behavior:'smooth'});});
+})();
+</script>
+<script>
+
+/* topographic map behind the whole page: contour lines of mountains seen from above.
+   Rings flow slowly outward from the summits, and the terrain drifts past with a gentle parallax on scroll. */
+(()=>{
+  const c=document.createElement('canvas'); c.className='topo-bg'; c.setAttribute('aria-hidden','true');
+  document.body.prepend(c);
+  const ctx=c.getContext('2d'); if(!ctx) return;
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const small=()=>innerWidth<760;
+  let W=0,H=0,dpr=1,CELL=14,GW=0,GH=0,F=null;
+  // peaks repeat down the page every SPAN px of world space, alternating sides
+  const SPAN=1500;
+  const PEAKS=[{x:.74,y:.30,r:.34,h:1},{x:.18,y:.78,r:.26,h:.72},{x:.58,y:.98,r:.16,h:.42},{x:.08,y:.18,r:.14,h:.35}];
+  function height(wx,wy){
+    // wx in 0..1 of viewport width, wy in px of world space. Every tile of terrain owns its own peaks
+    // (mirrored on odd tiles), and each point sums the peaks of its own and neighbouring tiles,
+    // so the field is continuous across tile edges.
+    const Y=wy/SPAN, tile=Math.floor(Y), asp=W/SPAN;
+    let h=0, ridge=0;
+    for(let t=tile-1;t<=tile+1;t++){
+      const flip=((t%2)+2)%2;
+      for(const p of PEAKS){
+        const px=flip?1-p.x:p.x, py=t+p.y;
+        const dx=(wx-px)*asp, dy=Y-py, d2=dx*dx+dy*dy, g=p.h*Math.exp(-d2/(p.r*p.r*.5));
+        h+=g;
+        const rr=p.r*p.r; // ridges fade out near the summit so the top stays a clean dome
+        ridge+=g*(1-Math.exp(-d2/(rr*.25)))*(Math.sin(Math.atan2(dy,dx)*5+t*1.7+p.x*9)+.6*Math.sin(Math.atan2(dy,dx)*3-p.y*7));
+      }
+    }
+    // gentle ridges and gullies, all in world coordinates so nothing jumps
+    h+=.045*Math.sin(wx*11+Y*6)+.018*Math.sin(wx*23-Y*15+1.3)+.05*ridge;
+    return h;
+  }
+  function size(){
+    dpr=Math.min(devicePixelRatio||1,1.5);
+    W=innerWidth; H=innerHeight+120;
+    CELL=small()?16:13;
+    c.width=W*dpr; c.height=H*dpr; c.style.width=W+'px'; c.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    GW=Math.ceil(W/CELL)+1; GH=Math.ceil(H/CELL)+1; F=new Float32Array(GW*GH);
+  }
+  const STEP=.055;
+  let last=0, t0=performance.now(), lastY=-1, lastOff=-1;
+  function draw(now){
+    const sy=scrollY*.18;                       // terrain moves slower than the content
+    const off=reduce?0:((now-t0)/1000*.0045)%STEP; // levels creep so rings flow outward
+    if(Math.abs(sy-lastY)<.5&&Math.abs(off-lastOff)<STEP*.004) return;
+    lastY=sy; lastOff=off;
+    for(let j=0;j<GH;j++){const wy=j*CELL+sy; for(let i=0;i<GW;i++) F[j*GW+i]=height(i*CELL/W,wy);}
+    ctx.clearRect(0,0,W,H);
+    // group segments by level band so each band is one stroke
+    const paths=new Map();
+    for(let j=0;j<GH-1;j++){
+      for(let i=0;i<GW-1;i++){
+        const a=F[j*GW+i], b=F[j*GW+i+1], cc=F[(j+1)*GW+i+1], d=F[(j+1)*GW+i];
+        const mn=Math.min(a,b,cc,d), mx=Math.max(a,b,cc,d);
+        let k0=Math.ceil((mn-off)/STEP), k1=Math.floor((mx-off)/STEP);
+        for(let k=k0;k<=k1;k++){
+          if(k<1) continue;
+          const L=k*STEP+off, x=i*CELL, y=j*CELL;
+          const e=[];
+          if((a<L)!==(b<L)) e.push(x+CELL*(L-a)/(b-a), y);
+          if((b<L)!==(cc<L)) e.push(x+CELL, y+CELL*(L-b)/(cc-b));
+          if((d<L)!==(cc<L)) e.push(x+CELL*(L-d)/(cc-d), y+CELL);
+          if((a<L)!==(d<L)) e.push(x, y+CELL*(L-a)/(d-a));
+          if(e.length<4) continue;
+          let p=paths.get(k); if(!p){p=[];paths.set(k,p);}
+          p.push(e[0],e[1],e[2],e[3]); if(e.length===8) p.push(e[4],e[5],e[6],e[7]);
+        }
+      }
+    }
+    ctx.lineWidth=1;
+    for(const [k,p] of paths){
+      const L=k*STEP+off, index=(k%5)===0, summit=L>.82;
+      ctx.strokeStyle=summit?`rgba(243,217,198,${index?.26:.17})`:`rgba(244,246,248,${index?.1:.055})`;
+      ctx.beginPath();
+      for(let n=0;n<p.length;n+=4){ctx.moveTo(p[n],p[n+1]-60);ctx.lineTo(p[n+2],p[n+3]-60);}
+      ctx.stroke();
+    }
+  }
+  function loop(now){
+    requestAnimationFrame(loop);
+    if(document.hidden) return;
+    if(now-last<(small()?66:40)) return; // ~15-25 fps is plenty for slow lines
+    last=now; draw(now);
+  }
+  size(); draw(performance.now());
+  let rt; addEventListener('resize',()=>{clearTimeout(rt); rt=setTimeout(()=>{size(); lastY=-1; draw(performance.now());},150);});
+  if(reduce) addEventListener('scroll',()=>requestAnimationFrame(t=>draw(t)),{passive:true});
+  else requestAnimationFrame(loop);
+})();
+
+</script>
 <script>
 /* product showcase: live radar mock */
 (()=>{
@@ -1073,7 +1189,7 @@ if(window.SplitText){
 if(!reduce){
   // Danish market: pinned, dots appear, signal, then narrow
   const dkSteps=gsap.utils.toArray('.dk-step');
-  const dtl=gsap.timeline({scrollTrigger:{trigger:'#dk',start:'top top',end:'+=260%',scrub:1,pin:true}});
+  const dtl=gsap.timeline({scrollTrigger:{trigger:'#dk',start:'top top',end:'+=120%',scrub:.6,pin:true}});
   if(dk) dtl.to(dk,{p:1,ease:'none',duration:3},0);
   dtl.to(dkSteps[0],{opacity:0,y:-30,duration:.25},.95).fromTo(dkSteps[1],{y:30},{opacity:1,y:0,duration:.25},1.05)
      .to(dkSteps[1],{opacity:0,y:-30,duration:.25},1.95).fromTo(dkSteps[2],{y:30},{opacity:1,y:0,duration:.25},2.05);
