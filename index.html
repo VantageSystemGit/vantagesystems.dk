@@ -278,6 +278,71 @@ em{font-style:italic;color:var(--glow)}
 @keyframes draw{to{stroke-dashoffset:0}}
 @media (max-width:560px){.demo-in{padding:28px 20px 22px}.demo .row2{grid-template-columns:1fr}.fld{margin-bottom:12px}.fld textarea{min-height:60px}.demo p.lede{margin-bottom:14px}}
 @media (prefers-reduced-motion:reduce){.demo[open],.demo[open]::backdrop{animation:none}}
+/* product showcase */
+.product{padding-block:clamp(96px,12vw,170px) clamp(80px,10vw,140px);position:relative}
+.product-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:40px;align-items:end;margin-bottom:clamp(36px,5vw,64px)}
+.product-head h2{font-size:clamp(40px,5.4vw,80px);line-height:1.02;margin:12px 0 0}
+.product-head p{color:var(--mist);margin:0;max-width:520px}
+.stage{perspective:1800px;perspective-origin:50% 0%}
+.frame{position:relative;border-radius:18px;border:1px solid var(--line);background:#0E1A29;box-shadow:0 60px 140px -40px rgba(0,0,0,.75),0 0 0 1px rgba(243,217,198,.04) inset;overflow:hidden;transform-origin:50% 0%;will-change:transform}
+.frame::after{content:"";position:absolute;inset:-40% -10% auto;height:70%;background:radial-gradient(closest-side,rgba(243,217,198,.08),transparent);pointer-events:none}
+.f-bar{display:flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-bottom:1px solid var(--line);background:#0B1520}
+.f-bar i{width:9px;height:9px;border-radius:50%;background:rgba(244,246,248,.14)}
+.f-url{margin-left:14px;flex:0 1 340px;height:22px;border-radius:999px;background:rgba(244,246,248,.05);font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;color:#7F93A8;display:flex;align-items:center;padding:0 12px}
+.f-body{display:grid;grid-template-columns:200px minmax(0,1fr);min-height:560px}
+.f-side{background:#08111A;border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:4px;position:relative;overflow:hidden}
+.f-side img{width:118px;margin:4px auto 6px;display:block;opacity:.95}
+.f-side .tag{font-family:var(--f-mono);font-size:9px;letter-spacing:.38em;color:var(--glow);text-align:center;margin-bottom:22px}
+.f-side .grp{font-size:10.5px;color:#6E8197;margin:10px 8px 4px}
+.f-nav{display:flex;align-items:center;gap:10px;font-size:13px;color:#C9D3DD;padding:8px 10px;border-radius:9px}
+.f-nav.on{background:#13233A;color:var(--snow)}
+.f-nav svg{width:14px;height:14px;opacity:.8}
+.f-side svg.topo{position:absolute;inset:auto 0 0 0;width:100%;height:60%;opacity:.5;pointer-events:none}
+.f-main{padding:22px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.f-hero{position:relative;border:1px solid var(--line);border-radius:14px;padding:18px 20px;overflow:hidden;background:radial-gradient(600px 180px at 85% -30px,rgba(243,217,198,.08),transparent 70%)}
+.f-hero canvas{position:absolute;right:0;bottom:0;width:58%;height:80%;-webkit-mask-image:linear-gradient(90deg,transparent,#000 35%);mask-image:linear-gradient(90deg,transparent,#000 35%)}
+.f-hero .ey{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.2em;color:var(--glow);text-transform:uppercase}
+.f-hero h3{font-family:var(--f-display);font-weight:300;font-size:clamp(24px,2.6vw,36px);margin:8px 0 4px;line-height:1.05;position:relative}
+.f-hero h3 em{color:var(--glow)}
+.f-hero p{font-size:12px;color:#8597AB;margin:0;max-width:52%;position:relative}
+.f-kpis{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.f-kpi{padding:14px 16px;border-right:1px solid var(--line)}
+.f-kpi:last-child{border-right:0}
+.f-kpi span{display:block;font-family:var(--f-mono);font-size:9px;letter-spacing:.18em;color:#8597AB;text-transform:uppercase}
+.f-kpi b{display:block;font-family:var(--f-display);font-weight:300;font-size:clamp(28px,3vw,42px);line-height:1;margin:10px 0 6px;font-variant-numeric:tabular-nums}
+.f-kpi small{font-size:10.5px;color:#6E8197}
+.f-grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:14px;min-height:0}
+.f-card{border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-width:0;background:rgba(16,29,46,.6)}
+.f-card h4{font-family:var(--f-display);font-weight:400;font-size:17px;margin:0 0 2px}
+.f-card .sub{font-size:10.5px;color:#6E8197;margin-bottom:10px}
+.matrix{position:relative;aspect-ratio:16/9.2;border-left:1px solid var(--line);border-bottom:1px solid var(--line)}
+.matrix .q{position:absolute;left:62.5%;top:0;width:37.5%;height:37.5%;background:rgba(243,217,198,.045);border-left:1px dashed rgba(244,246,248,.14);border-bottom:1px dashed rgba(244,246,248,.14)}
+.matrix .ql{position:absolute;font-family:var(--f-mono);font-size:8.5px;letter-spacing:.16em;color:#6E8197}
+.matrix .dot{position:absolute;border-radius:50%;transform:translate(-50%,-50%) scale(0);background:rgba(185,197,210,.55);transition:box-shadow .25s,background .25s}
+.matrix .dot.hot{background:var(--glow);box-shadow:0 0 14px rgba(243,217,198,.45)}
+.matrix .dot:hover{box-shadow:0 0 0 4px rgba(243,217,198,.25);z-index:3}
+.matrix .ax{position:absolute;font-family:var(--f-mono);font-size:8.5px;color:#6E8197;letter-spacing:.1em}
+.mtip{position:absolute;pointer-events:none;background:#13233A;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:11px;white-space:nowrap;opacity:0;transform:translate(-50%,calc(-100% - 12px));transition:opacity .2s;z-index:5}
+.mtip b{font-weight:500;color:var(--snow)} .mtip span{color:#8597AB}
+.actnow{display:flex;flex-direction:column}
+.an{display:grid;grid-template-columns:16px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 4px;border-bottom:1px solid rgba(244,246,248,.06)}
+.an:last-child{border-bottom:0}
+.an i{font-style:normal;font-family:var(--f-mono);font-size:10px;color:#6E8197}
+.an b{display:block;font-weight:500;font-size:12.5px}
+.an small{display:block;font-size:10px;color:#6E8197;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.an em{font-style:normal;font-size:10.5px;color:#8597AB;text-align:right;line-height:1.35;font-variant-numeric:tabular-nums}
+.an em u{text-decoration:none;color:var(--snow)}
+.sig{display:inline-block;font-size:9.5px;border:1px solid var(--line);border-radius:999px;padding:1px 7px;margin:4px 4px 0 0;color:#B9C5D2}
+.product-notes{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:clamp(36px,5vw,56px)}
+.product-notes div{border-top:1px solid var(--line);padding-top:16px}
+.product-notes b{display:block;font-family:var(--f-display);font-weight:400;font-size:22px;margin-bottom:6px}
+.product-notes span{color:var(--mist);font-size:15px}
+@media (max-width:980px){.f-body{grid-template-columns:1fr}.f-side{display:none}.product-head{grid-template-columns:1fr}}
+@media (max-width:760px){
+  .f-main{padding:12px;gap:10px}.f-kpis{grid-template-columns:repeat(2,1fr)}.f-kpi:nth-child(2){border-right:0}.f-kpi:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .f-grid{grid-template-columns:1fr}.f-hero p{max-width:100%}.f-hero canvas{width:100%;opacity:.45}.f-body{min-height:0}
+  .product-notes{grid-template-columns:1fr;gap:18px}.f-url{display:none}
+}
 </style>
 </head>
 <body>
@@ -368,6 +433,74 @@ em{font-style:italic;color:var(--glow)}
   </div>
 </section>
 
+<section class="product wrap" id="product" aria-label="The product">
+  <div class="product-head">
+    <div>
+      <span class="mono eyebrow">Inside Foresight</span>
+      <h2>Your market, <em>on one screen.</em></h2>
+    </div>
+    <p>Every company scored on two questions: how likely is a sale within one to three years, and how well does it fit what you buy. Filter it, open a company and see the patterns behind the score.</p>
+  </div>
+  <div class="stage">
+    <div class="frame" id="pframe" role="img" aria-label="The Foresight radar screen with key figures, an opportunity matrix and a shortlist, shown with illustrative data">
+      <div class="f-bar" aria-hidden="true"><i></i><i></i><i></i><span class="f-url">Foresight · Radar</span></div>
+      <div class="f-body" aria-hidden="true">
+        <aside class="f-side">
+          <img src="logo.png" alt="">
+          <div class="tag">FORESIGHT</div>
+          <div class="grp">Foresight</div>
+          <div class="f-nav on"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6"/><circle cx="8" cy="8" r="2.5"/><path d="M8 8l4-4"/></svg>Radar</div>
+          <div class="f-nav"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2l1.8 3.7 4 .6-2.9 2.8.7 4L8 11.2 4.4 13l.7-4L2.2 6.3l4-.6z"/></svg>Watchlist</div>
+          <div class="f-nav"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2.5" y="3" width="11" height="10" rx="1.5"/><path d="M5 6h6M5 9h4"/></svg>Company profiles</div>
+          <div class="f-nav"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 13l4-5 3 3 5-7"/></svg>Track record</div>
+          <div class="f-nav"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 5l6-3 6 3-6 3zM2 8l6 3 6-3M2 11l6 3 6-3"/></svg>Sectors</div>
+          <div class="grp">Settings</div>
+          <div class="f-nav"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 4h10M3 8h10M3 12h10"/><circle cx="6" cy="4" r="1.3"/><circle cx="10" cy="8" r="1.3"/><circle cx="5" cy="12" r="1.3"/></svg>Your criteria</div>
+          <svg class="topo" viewBox="0 0 200 300" preserveAspectRatio="none"><g fill="none" stroke="rgba(244,246,248,.12)" stroke-width="1"><path d="M0 40 Q50 20 100 45 T200 35"/><path d="M0 80 Q60 55 110 85 T200 70"/><path d="M0 120 Q50 100 95 128 T200 110" stroke="rgba(243,217,198,.25)"/><path d="M0 160 Q60 140 115 168 T200 150"/><path d="M0 200 Q50 180 100 205 T200 190"/><path d="M0 240 Q60 220 110 245 T200 230"/><path d="M0 280 Q50 262 95 286 T200 270"/></g></svg>
+        </aside>
+        <div class="f-main">
+          <div class="f-hero">
+            <canvas id="pridge"></canvas>
+            <div class="ey">Foresight · Radar · Illustrative data</div>
+            <h3>See it <em>first.</em> This month</h3>
+            <p>Platform candidates likely to come up for sale within 1-3 years, scored on fit with your criteria.</p>
+          </div>
+          <div class="f-kpis">
+            <div class="f-kpi"><span>Companies scored</span><b data-n="48">48</b><small>within your size range</small></div>
+            <div class="f-kpi"><span>Act now</span><b data-n="9">9</b><small>both scores 70+</small></div>
+            <div class="f-kpi"><span>New this month</span><b data-n="17">17</b><small>fresh sale signals</small></div>
+            <div class="f-kpi"><span>Caught in backtest</span><b data-n="58" data-suf="%">58%</b><small>flagged before the sale</small></div>
+          </div>
+          <div class="f-grid">
+            <div class="f-card">
+              <h4>Actionability × attractiveness</h4>
+              <div class="sub">Right: likely to sell within 1-3 years. Up: strong fit. Size is EBITDA.</div>
+              <div class="matrix" id="pmatrix">
+                <div class="q"></div>
+                <span class="ql" style="left:64%;top:6px">ACT NOW</span>
+                <span class="ql" style="left:6px;top:6px">PREPARE</span>
+                <span class="ql" style="right:6px;bottom:6px">OPPORTUNISTIC</span>
+                <span class="ql" style="left:6px;bottom:6px">MONITOR</span>
+                <div class="mtip" id="ptip"></div>
+              </div>
+            </div>
+            <div class="f-card">
+              <h4>Act now</h4>
+              <div class="sub">Strongest on both scores</div>
+              <div class="actnow" id="pact"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="product-notes">
+    <div><b>Two scores, one reason</b><span>Actionability is the chance of a sale. Attractiveness is the fit with your criteria. Every score comes with the patterns behind it.</span></div>
+    <div><b>Built around your criteria</b><span>Size, sectors, growth and ownership. Change a filter and the list re-ranks at once.</span></div>
+    <div><b>Delivered monthly</b><span>A fresh run every month, with what changed since last time and an export to Excel.</span></div>
+  </div>
+</section>
+
 <section class="stats wrap" aria-label="Key figures">
   <div class="inner">
     <div class="stat"><canvas class="sviz" data-shape="years" aria-hidden="true"></canvas><b><span class="count" data-to="10">10</span> years</b><span>of registry history behind every pattern.</span></div>
@@ -430,6 +563,67 @@ em{font-style:italic;color:var(--glow)}
 </main>
 
 
+<script>
+/* product showcase: live radar mock */
+(()=>{
+  const M=document.getElementById('pmatrix'); if(!M) return;
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let seed=7; const r=()=>{seed=(seed*16807)%2147483647; return seed/2147483647;};
+  const sectors=['Industrials','Software & IT','Business services','Food & agri','Healthcare services','Transport & logistics'];
+  const names=['Granite','Aurora','Compass','Orchard','Fjord','Nimbus','Heather','Kestrel','Isle','Birch','Harbour','Lumen','Tundra','Cobalt','Meadow','Quarry','Saga','Vega','Ember','Willow','Atlas','Coast','Delta','Forge','Glen','Haven','Iris','Juniper','Krone','Ledger','Mosaic','Nordic'];
+  const pts=names.map((n,i)=>{
+    const hot=i<9; const a=hot?70+r()*28:20+r()*72, b=hot?70+r()*28:22+r()*70;
+    return {n:'Project '+n,a:Math.round(hot?a:Math.min(a,hot?a:a)),b:Math.round(b),e:Math.round(120+r()*700),s:sectors[(r()*sectors.length)|0]};
+  });
+  pts.forEach(p=>{if(!(p.a>=70&&p.b>=70)&&pts.indexOf(p)>=9&&p.a>=70&&p.b>=70)p.b=60;});
+  const tip=document.getElementById('ptip');
+  const dots=pts.map(p=>{
+    const d=document.createElement('div'); const sz=8+Math.sqrt(p.e)*0.7;
+    d.className='dot'+(p.a>=70&&p.b>=70?' hot':'');
+    d.style.cssText=`left:${(p.a-20)/80*100}%;top:${100-(p.b-20)/80*100}%;width:${sz}px;height:${sz}px`;
+    d.addEventListener('pointerenter',()=>{tip.innerHTML=`<b>${p.n}</b> <span>· ${p.s} · EBITDA DKK ${p.e}m</span><br><span>Act.</span> <b>${p.a}</b> <span>· Attr.</span> <b>${p.b}</b>`;tip.style.left=d.style.left;tip.style.top=d.style.top;tip.style.opacity=1;});
+    d.addEventListener('pointerleave',()=>{tip.style.opacity=0;});
+    M.appendChild(d); return d;
+  });
+  for(const [t,x,y] of [['20',0,100],['60',50,100],['100',100,100]]){const s=document.createElement('span');s.className='ax';s.textContent=t;s.style.cssText=`left:${x}%;top:calc(${y}% + 6px);transform:translateX(-50%)`;M.appendChild(s);}
+  const sig=[['Generational change','Auditor changed'],['PE owner nearing exit','Refinancing'],['Founder 30+ years','New CFO'],['Holding structure created'],['External CEO appointed']];
+  const top=pts.filter(p=>p.a>=70&&p.b>=70).sort((x,y)=>(y.a+y.b)-(x.a+x.b)).slice(0,5);
+  document.getElementById('pact').innerHTML=top.map((p,i)=>`<div class="an"><i>${i+1}</i><div><b>${p.n}</b><small>${p.s} · EBITDA DKK ${p.e}m</small><div>${sig[i].map(s=>`<span class="sig">${s}</span>`).join('')}</div></div><em>Act. <u>${p.a}</u><br>Attr. <u>${p.b}</u></em></div>`).join('');
+
+  // ridge star field in the page header
+  const c=document.getElementById('pridge'), ctx=c.getContext('2d'); let W=0,H=0,S=[],t0=null,vis=false;
+  const ridge=u=>Math.max(Math.exp(-((u-.62)**2)/.018),.55*Math.exp(-((u-.4)**2)/.03),.28*Math.exp(-((u-.86)**2)/.02))*.9+.05*Math.sin(u*23);
+  function build(){const b=c.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);W=Math.max(100,b.width);H=Math.max(50,b.height);c.width=W*dpr;c.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);S=[];
+    for(let x=0;x<=W;x+=5){const u=x/W,y=H-8-ridge(u)*H*.8;S.push({tx:x,ty:y,w:ridge(u)>.82});if(Math.random()<.4)S.push({tx:x,ty:y+8+Math.random()*8,w:false});}
+    for(let x=0;x<=W;x+=7)S.push({tx:x,ty:H-8,w:false});
+    S.forEach(p=>Object.assign(p,{x:Math.random()*W,y:Math.random()*H,hx:Math.random()*W,hy:Math.random()*H,vx:(Math.random()-.5)*.16,vy:(Math.random()-.5)*.1,ph:Math.random()*6.28,d:Math.random()*.9}));}
+  const ez=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2, cl=v=>v<0?0:v>1?1:v;
+  function frame(now){requestAnimationFrame(frame); if(!vis) return; if(t0===null)t0=now; const el=(now-t0)/1000, f=reduce?1:cl(el/2.2); ctx.clearRect(0,0,W,H);
+    for(const p of S){p.hx+=p.vx;p.hy+=p.vy;if(p.hx<0||p.hx>W)p.vx*=-1;if(p.hy<0||p.hy>H)p.vy*=-1;const k=ez(cl(f*1.9-p.d));
+      const gx=p.hx+(p.tx-p.hx)*k+Math.sin(el*1.2+p.ph)*.4*k, gy=p.hy+(p.ty-p.hy)*k+Math.cos(el+p.ph)*.4*k; p.x+=(gx-p.x)*(reduce?1:.12); p.y+=(gy-p.y)*(reduce?1:.12);
+      const tw=.55+.45*Math.sin(el*2.2+p.ph*3), w=p.w&&k>.75, a=w?.85:.3+.35*tw;
+      if(w){ctx.fillStyle=`rgba(243,217,198,${.12*a})`;ctx.beginPath();ctx.arc(p.x,p.y,4.4,0,6.283);ctx.fill();}
+      ctx.fillStyle=w?`rgba(243,217,198,${a})`:`rgba(185,197,210,${a})`;ctx.beginPath();ctx.arc(p.x,p.y,w?1.4:1,0,6.283);ctx.fill();}}
+  build(); new ResizeObserver(build).observe(c);
+  new IntersectionObserver(([e])=>{vis=e.isIntersecting;}).observe(c); requestAnimationFrame(frame);
+
+  // scroll choreography
+  const kp=[...document.querySelectorAll('.f-kpi b')];
+  const go=()=>{
+  if(window.gsap&&window.ScrollTrigger&&!reduce){
+    gsap.set(dots,{xPercent:-50,yPercent:-50,x:0,y:0,scale:0});
+    gsap.fromTo('#pframe',{rotateX:22,y:60,scale:.93,opacity:.35},{rotateX:0,y:0,scale:1,opacity:1,ease:'none',scrollTrigger:{trigger:'.stage',start:'top 95%',end:'top 25%',scrub:true}});
+    ScrollTrigger.create({trigger:'.stage',start:'top 55%',once:true,onEnter:()=>{
+      gsap.to(dots,{scale:1,duration:.7,ease:'back.out(2.2)',stagger:{each:.035,from:'random'}});
+      kp.forEach(b=>{const n=+b.dataset.n,suf=b.dataset.suf||'',o={v:0};gsap.to(o,{v:n,duration:1.6,ease:'power3.out',onUpdate:()=>{b.textContent=Math.round(o.v)+suf;}});});
+      gsap.from('.an',{opacity:0,x:16,duration:.6,stagger:.08,ease:'power2.out',delay:.4});
+    }});
+  } else { dots.forEach(d=>d.style.transform='translate(-50%,-50%) scale(1)'); }
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go();
+})();
+
+</script>
 <script>
 /* star-field key figures: particles drift, then form each shape */
 (()=>{
