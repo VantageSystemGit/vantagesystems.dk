@@ -47,8 +47,8 @@ em{font-style:italic;color:var(--glow)}
 .btn svg{transition:transform .3s}.btn:hover svg{transform:translateX(4px)}
 
 /* nav */
-.nav{position:fixed;inset:0 0 auto;z-index:20;display:flex;justify-content:space-between;align-items:center;padding-top:calc(18px + env(safe-area-inset-top, 0px));padding-bottom:18px;transition:background .4s, backdrop-filter .4s}
-.nav.solid{background:rgba(11,21,32,.72);backdrop-filter:blur(14px)}
+.nav{position:fixed;inset:0 0 auto;z-index:20;display:flex;justify-content:space-between;align-items:center;padding-top:calc(18px + env(safe-area-inset-top, 0px));padding-bottom:18px;transition:background .4s}
+.nav.solid{background:rgba(11,21,32,.94)}
 .nav img{width:100px;height:auto;display:block}
 .nav ul{display:flex;gap:clamp(14px,3vw,40px);list-style:none;margin:0;padding:0}
 .nav a{text-decoration:none;padding:12px 0;display:inline-block}
@@ -284,7 +284,7 @@ em{font-style:italic;color:var(--glow)}
 .product-head h2{font-size:clamp(40px,5.4vw,80px);line-height:1.02;margin:12px 0 0}
 .product-head p{color:var(--mist);margin:0;max-width:520px}
 .stage{perspective:1800px;perspective-origin:50% 0%}
-.frame{position:relative;border-radius:18px;border:1px solid var(--line);background:#0E1A29;box-shadow:0 60px 140px -40px rgba(0,0,0,.75),0 0 0 1px rgba(243,217,198,.04) inset;overflow:hidden;transform-origin:50% 0%;will-change:transform}
+.frame{position:relative;border-radius:18px;border:1px solid var(--line);background:#0E1A29;will-change:transform;box-shadow:0 40px 90px -30px rgba(0,0,0,.7),0 0 0 1px rgba(243,217,198,.04) inset;overflow:hidden;transform-origin:50% 0%;will-change:transform}
 .frame::after{content:"";position:absolute;inset:-40% -10% auto;height:70%;background:radial-gradient(closest-side,rgba(243,217,198,.08),transparent);pointer-events:none}
 .f-bar{display:flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-bottom:1px solid var(--line);background:#0B1520}
 .f-bar i{width:9px;height:9px;border-radius:50%;background:rgba(244,246,248,.14)}
@@ -345,7 +345,7 @@ em{font-style:italic;color:var(--glow)}
 }
 
 /* topographic map behind the whole page */
-.topo-bg{position:fixed;left:0;top:-60px;z-index:-1;pointer-events:none;display:block}
+.topo-bg{position:fixed;left:0;top:-60px;z-index:-1;pointer-events:none;display:block;will-change:transform;transform:translateZ(0)}
 
 /* scroll cue */
 .scroll-cue{position:absolute;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:3;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;color:rgba(244,246,248,.6);text-decoration:none;font-family:var(--f-mono);font-size:10px;letter-spacing:.32em;text-transform:uppercase;transition:opacity .5s,transform .5s;opacity:0;animation:cueIn 1s 1.6s ease forwards}
@@ -596,6 +596,7 @@ em{font-style:italic;color:var(--glow)}
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   const small=()=>innerWidth<760;
   let W=0,H=0,dpr=1,CELL=14,GW=0,GH=0,F=null;
+  const ROWS=new Map(); // world row index -> heights, terrain never changes so each row is computed once
   // peaks repeat down the page every SPAN px of world space, alternating sides
   const SPAN=1500;
   const PEAKS=[{x:.74,y:.30,r:.34,h:1},{x:.18,y:.78,r:.26,h:.72},{x:.58,y:.98,r:.16,h:.42},{x:.08,y:.18,r:.14,h:.35}];
@@ -620,12 +621,12 @@ em{font-style:italic;color:var(--glow)}
     return h;
   }
   function size(){
-    dpr=Math.min(devicePixelRatio||1,1.5);
+    dpr=1; // thin faint lines, full resolution is not worth the cost
     W=innerWidth; H=innerHeight+120;
     CELL=small()?16:13;
     c.width=W*dpr; c.height=H*dpr; c.style.width=W+'px'; c.style.height=H+'px';
     ctx.setTransform(dpr,0,0,dpr,0,0);
-    GW=Math.ceil(W/CELL)+1; GH=Math.ceil(H/CELL)+1; F=new Float32Array(GW*GH);
+    GW=Math.ceil(W/CELL)+1; GH=Math.ceil(H/CELL)+2; F=new Float32Array(GW*GH); ROWS.clear();
   }
   const STEP=.055;
   let last=0, t0=performance.now(), lastY=-1, lastOff=-1;
@@ -634,8 +635,15 @@ em{font-style:italic;color:var(--glow)}
     const off=reduce?0:((now-t0)/1000*.0045)%STEP; // levels creep so rings flow outward
     if(Math.abs(sy-lastY)<.5&&Math.abs(off-lastOff)<STEP*.004) return;
     lastY=sy; lastOff=off;
-    for(let j=0;j<GH;j++){const wy=j*CELL+sy; for(let i=0;i<GW;i++) F[j*GW+i]=height(i*CELL/W,wy);}
-    ctx.clearRect(0,0,W,H);
+    const r0=Math.floor(sy/CELL), frac=sy-r0*CELL;
+    for(let j=0;j<GH;j++){
+      const r=r0+j; let row=ROWS.get(r);
+      if(!row){row=new Float32Array(GW); const wy=r*CELL; for(let i=0;i<GW;i++) row[i]=height(i*CELL/W,wy); ROWS.set(r,row);}
+      F.set(row,j*GW);
+    }
+    if(ROWS.size>GH*6){for(const k of ROWS.keys()){if(k<r0-GH*2||k>r0+GH*3) ROWS.delete(k);}}
+    ctx.setTransform(dpr,0,0,dpr,0,-frac*dpr);
+    ctx.clearRect(0,0,W,H+CELL);
     // group segments by level band so each band is one stroke
     const paths=new Map();
     for(let j=0;j<GH-1;j++){
@@ -665,11 +673,13 @@ em{font-style:italic;color:var(--glow)}
       for(let n=0;n<p.length;n+=4){ctx.moveTo(p[n],p[n+1]-60);ctx.lineTo(p[n+2],p[n+3]-60);}
       ctx.stroke();
     }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
   }
   function loop(now){
     requestAnimationFrame(loop);
     if(document.hidden) return;
-    if(now-last<(small()?66:40)) return; // ~15-25 fps is plenty for slow lines
+    if(scrollY<innerHeight*.7) return; // the hero covers the screen, nothing to see
+    if(now-last<(small()?66:50)) return; // ~15-25 fps is plenty for slow lines
     last=now; draw(now);
   }
   size(); draw(performance.now());
@@ -709,7 +719,7 @@ em{font-style:italic;color:var(--glow)}
   // ridge star field in the page header
   const c=document.getElementById('pridge'), ctx=c.getContext('2d'); let W=0,H=0,S=[],t0=null,vis=false;
   const ridge=u=>Math.max(Math.exp(-((u-.62)**2)/.018),.55*Math.exp(-((u-.4)**2)/.03),.28*Math.exp(-((u-.86)**2)/.02))*.9+.05*Math.sin(u*23);
-  function build(){const b=c.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);W=Math.max(100,b.width);H=Math.max(50,b.height);c.width=W*dpr;c.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);S=[];
+  function build(){const b=c.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,1.5);W=Math.max(100,b.width);H=Math.max(50,b.height);c.width=W*dpr;c.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);S=[];
     for(let x=0;x<=W;x+=5){const u=x/W,y=H-8-ridge(u)*H*.8;S.push({tx:x,ty:y,w:ridge(u)>.82});if(Math.random()<.4)S.push({tx:x,ty:y+8+Math.random()*8,w:false});}
     for(let x=0;x<=W;x+=7)S.push({tx:x,ty:H-8,w:false});
     S.forEach(p=>Object.assign(p,{x:Math.random()*W,y:Math.random()*H,hx:Math.random()*W,hy:Math.random()*H,vx:(Math.random()-.5)*.16,vy:(Math.random()-.5)*.1,ph:Math.random()*6.28,d:Math.random()*.9}));}
@@ -753,7 +763,7 @@ em{font-style:italic;color:var(--glow)}
   const scenes=cvs.map(c=>({c,ctx:c.getContext('2d'),shape:c.dataset.shape,P:[],labels:[],t0:null,vis:false,W:0,H:0,mx:-1e3,my:-1e3,cycleStart:0}));
 
   function build(S){
-    const dpr=Math.min(devicePixelRatio||1,2), r=S.c.getBoundingClientRect();
+    const dpr=Math.min(devicePixelRatio||1,1.5), r=S.c.getBoundingClientRect();
     const W=S.W=Math.max(200,r.width), H=S.H=r.height||128;
     S.c.width=W*dpr; S.c.height=H*dpr; S.ctx.setTransform(dpr,0,0,dpr,0,0);
     const T=[]; S.labels=[]; S.pulse=null;
@@ -913,8 +923,9 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 /* ---------- 3D contour volcano ---------- */
 function buildMountain(canvas, top){
   if(!window.THREE||!canvas) return null;
-  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:false});
-  renderer.setPixelRatio(Math.min(devicePixelRatio, innerWidth<760?1.5:2));
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:false, alpha:false, powerPreference:'high-performance'});
+  let PR=Math.min(devicePixelRatio, innerWidth<760?1.25:1.5);
+  renderer.setPixelRatio(PR);
   const scene = new THREE.Scene();
   const BG = new THREE.Color('#0B1520');
   scene.background = BG;
@@ -928,7 +939,7 @@ function buildMountain(canvas, top){
     const x0=Math.floor(x),y0=Math.floor(y),x1=Math.min(x0+1,DEM_N-1),y1=Math.min(y0+1,DEM_N-1),fx=x-x0,fy=y-y0;
     const g=(i,j)=>dem[j*DEM_N+i]/65535;
     return (g(x0,y0)*(1-fx)+g(x1,y0)*fx)*(1-fy)+(g(x0,y1)*(1-fx)+g(x1,y1)*fx)*fy;}
-  const SEG = innerWidth < 760 ? 200 : 319;
+  const SEG = innerWidth < 760 ? 160 : 240;
   const SIZE=9, EXAG=1.7;
   const geo = new THREE.PlaneGeometry(SIZE,SIZE,SEG,SEG);
   geo.rotateX(-Math.PI/2);
@@ -972,7 +983,7 @@ function buildMountain(canvas, top){
   scene.add(mesh);
 
   // drifting cloud sea (soft points) that wraps seamlessly
-  const N = innerWidth < 760 ? 900 : 1800;
+  const N = innerWidth < 760 ? 350 : 700;
   const cg = new THREE.BufferGeometry(); const cp = new Float32Array(N*3); const cs = new Float32Array(N);
   for(let i=0;i<N;i++){cp[i*3]=(Math.random()-.5)*10;cp[i*3+1]=.12+Math.random()*.22;cp[i*3+2]=(Math.random()-.5)*10;cs[i]=.4+Math.random();}
   cg.setAttribute('position',new THREE.BufferAttribute(cp,3)); cg.setAttribute('aS',new THREE.BufferAttribute(cs,1));
@@ -990,9 +1001,13 @@ function buildMountain(canvas, top){
   addEventListener('pointermove',e=>{state.tx=(e.clientX/innerWidth-.5);state.ty=(e.clientY/innerHeight-.5);});
   let visible=!top; new IntersectionObserver(es=>{visible=es[0].isIntersecting;}).observe(canvas);
   const clock=new THREE.Clock();
-  function frame(){
+  // adaptive quality: if the first second runs slow, drop the resolution
+  let fN=0, fT0=0, tuned=false;
+  function frame(now){
     const t=clock.getElapsedTime();
-    if(visible){
+    if(visible&&!document.hidden){
+      if(!tuned){ if(fN===0) fT0=performance.now(); if(++fN===45){ const fps=45000/(performance.now()-fT0); tuned=true;
+        if(fps<50&&PR>1){PR=1; renderer.setPixelRatio(1); resize(); cm.uniforms.uPx.value=1;} } }
       state.mx+=(state.tx-state.mx)*.04; state.my+=(state.ty-state.my)*.04;
       if(top){
         const ang=(reduce?0:t*.035)+state.mx*.3;
@@ -1036,7 +1051,7 @@ let dk=null;
   const idx=[...Array(N).keys()].filter(i=>D[i].sig).sort(()=>rnd()-.5).slice(0,60); idx.forEach(i=>D[i].hi=true);
   const labels=[{x:OUT.cph[0],y:OUT.cph[1],t:'New holding company'},{x:OUT.sto[0],y:OUT.sto[1],t:'Owner tenure · 21 yrs'},{x:OUT.mun[0],y:OUT.mun[1],t:'Board change'}];
   const st={p:0,cur:0}; let W=0,H=0,dpr=1,ox=0,oy=0,sc=1;
-  function size(){const r=cv.getBoundingClientRect();dpr=Math.min(devicePixelRatio,2);W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;
+  function size(){const r=cv.getBoundingClientRect();dpr=Math.min(devicePixelRatio,1.5);W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;
     sc=Math.min(W/OUT.w,H/OUT.h)*.97; ox=(W-OUT.w*sc)/2; oy=(H-OUT.h*sc)/2;}
   addEventListener('resize',size); size();
   let vis=false; new IntersectionObserver(es=>{vis=es[0].isIntersecting;if(vis)size();}).observe(cv);
@@ -1076,7 +1091,7 @@ let dk=null;
 let proc=null;
 (function(){
   const cv=document.getElementById('proc'); if(!window.THREE||!cv) return;
-  const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true}); R.setPixelRatio(Math.min(devicePixelRatio,innerWidth<760?1.5:2));
+  const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true,powerPreference:'high-performance'}); R.setPixelRatio(Math.min(devicePixelRatio,1.5));
   const S=new THREE.Scene(); const C=new THREE.PerspectiveCamera(36,3/4,.1,50); C.position.set(0,.6,7.2);
   const N=innerWidth<760?900:1800, TOP=25; let seed=11; const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
   const gauss=()=>{let u=0,v=0;while(!u)u=rnd();while(!v)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);};
@@ -1161,7 +1176,7 @@ gsap.registerPlugin(ScrollTrigger, window.SplitText||{});
 ScrollTrigger.config({ignoreMobileResize:true});
 
 if(window.Lenis && !reduce){
-  const lenis=new Lenis({lerp:.085,smoothWheel:true,syncTouch:false}); window.__lenis=lenis;
+  const lenis=new Lenis({lerp:.14,smoothWheel:true,syncTouch:false}); window.__lenis=lenis;
   lenis.on('scroll',ScrollTrigger.update);
   gsap.ticker.add(t=>lenis.raf(t*1000)); gsap.ticker.lagSmoothing(0);
   document.querySelectorAll('a[href^="#"]:not(.js-demo)').forEach(a=>a.addEventListener('click',e=>{const el=document.querySelector(a.getAttribute('href'));if(el){e.preventDefault();lenis.scrollTo(el,{offset:0,duration:1.6});}}));
