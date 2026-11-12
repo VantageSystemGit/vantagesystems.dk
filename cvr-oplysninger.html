@@ -33,14 +33,32 @@ footer{border-top:1px solid var(--line);padding-block:28px;color:#8597AB;font-si
 <main class="wrap">
   <span class="mono" style="color:var(--glow)">Til ejere og ledere i CVR</span>
   <h1>Sådan bruger Foresight oplysninger fra CVR</h1>
-  <p class="meta">Senest opdateret 11. november 2026. Vi gennemgår teksten hvert halve år.</p>
+  <p class="meta">Senest opdateret 12. november 2026. Vi gennemgår teksten hvert halve år.</p>
 
   <p>Vantage Systems laver Foresight, en analyse af danske selskaber. Den vurderer, hvor sandsynligt det er, at et selskab skifter ejer inden for de næste år, fx ved et generationsskifte eller et salg. Til det bruger vi oplysninger fra det offentlige virksomhedsregister CVR og fra offentlige årsrapporter. Står du i CVR eller i en offentlig årsrapport som ejer, direktør, bestyrelsesmedlem, stifter, revisor eller dirigent i et selskab, kan vi derfor have oplysninger om dig. Her kan du læse, hvad vi gør, og hvilke rettigheder du har.</p>
   <p>Det drejer sig om over 200.000 personer. At skrive til hver enkelt ville kræve en uforholdsmæssig stor indsats, og derfor giver vi oplysningerne her (databeskyttelsesforordningens artikel 14, stk. 5, litra b). Vores afvejning af det kan fås ved henvendelse.</p>
 
   <div class="boks">
     <h2>Du kan sige nej</h2>
-    <p>Du kan til enhver tid gøre indsigelse mod, at vi bruger oplysninger om dig. Det kræver ingen begrundelse. Så tager vi dig ud af alt, kunder ser, og ud af fremtidig træning af modellen. Selskaber, hvor du er registreret som ejer, vises ikke for kunder. Det gælder også, når vi henter nye data fra CVR: vi tjekker vores spærreliste, før kunder får data. Låste testdata, som kun bruges internt, og som ingen kunde ser, ændrer vi ikke. Når vores program læser dem, springer det dig over som ejer, leder og part i ejerskifter. Dit navn kan dog stå i tekst i årsrapporter, og har du en enkeltmandsvirksomhed, er dens egne tal med. Tal, der allerede er regnet ud fra dataene (fx om et selskabs øverste ejer er en person), ændres heller ikke. Alt slettes senest 31.12.2027. Skriv til <a href="mailto:cw@vantagesystems.dk">cw@vantagesystems.dk</a>.</p>
+    <p>Du kan til enhver tid gøre indsigelse mod, at vi bruger oplysninger om dig. Det kræver ingen begrundelse. Så tager vi dig ud af alt, kunder ser, og ud af fremtidig træning af modellen. Det gælder også, når vi henter nye data fra CVR: vi tjekker vores spærreliste, hver gang vi bygger de data, kunder ser.</p>
+    <p>Sådan gør vi:</p>
+    <ul>
+      <li>Selskaber, du i dag står som ejer af i CVR, vises ikke for kunder, uanset hvor stor din andel er.</li>
+      <li>Selskaber, du ejer gennem holdingselskaber, vises heller ikke, når hvert led i kæden ejes mindst 50 %.</li>
+      <li>Dine egne enkeltmandsvirksomheder slår vi op i CVR og skjuler for kunder ligesom dig selv.</li>
+      <li>Sidder du kun i ledelsen, tager vi dig ud, men selskabet vises stadig.</li>
+      <li>Har du tidligere ejet et selskab, vises selskabet, men dit navn står ikke i ejerhistorikken og ejerskifterne.</li>
+    </ul>
+    <p>Det kan vi ikke:</p>
+    <ul>
+      <li>Står du ikke som ejer i CVR, kan vi ikke se, at du ejer selskabet.</li>
+      <li>Ejer du under 50 % gennem et holdingselskab, vises selskabet. Det gælder også, hvis kæden går gennem et udenlandsk selskab uden ejeroplysninger i CVR.</li>
+      <li>Starter du en ny enkeltmandsvirksomhed efter din indsigelse, tager vi den først med, når du skriver til os.</li>
+      <li>Står dit navn i et revisionsfirmas navn, vises firmanavnet. Står du som revisor i en årsrapport uden CVR-nummer, fanger vi dig ikke altid, fx ved en stavefejl eller hvis kun dit fornavn står der.</li>
+      <li>Tekst i årsrapporter, fx ledelsesberetninger, filtrerer vi ikke. Foresight viser ikke de tekster.</li>
+      <li>Din enkeltmandsvirksomhed tager vi ud af alt, kunder ser, men ikke af de data, vi træner modellen på. Dens roller og ejerskaber bliver stående dér.</li>
+    </ul>
+    <p>Låste testdata, som kun bruges internt, og som ingen kunde ser, ændrer vi ikke. Når vores program læser dem, springer det dig over som ejer, leder og part i ejerskifter. Dit navn kan dog stå i tekst i årsrapporter, og har du en enkeltmandsvirksomhed, er dens egne tal med. Tal, der allerede er regnet ud fra dataene (fx om et selskabs øverste ejer er en person), ændres heller ikke. Alt slettes senest 31.12.2027. Skriv til <a href="mailto:cw@vantagesystems.dk">cw@vantagesystems.dk</a>.</p>
   </div>
 
   <h2>Hvem er ansvarlig</h2>
